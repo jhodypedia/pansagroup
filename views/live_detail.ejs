@@ -1,0 +1,42 @@
+<h2 class="mb-2">Detail Live #<%= L.id %></h2>
+<div id="alerts" class="mb-2"></div>
+
+<div class="split-2">
+  <div class="card">
+    <h3 class="card-title">Info Lokal</h3>
+    <p class="m-0"><b>Judul:</b> <%= L.title %></p>
+    <p class="m-0"><b>Status:</b> <span class="badge <%= L.status==='live'?'badge-success':(L.status==='failed'?'badge-danger':'badge-info') %>"><%= L.status %></span></p>
+    <p class="m-0"><b>Dijadwalkan:</b> <%= L.scheduledStartTime ? new Date(L.scheduledStartTime).toLocaleString() : '-' %></p>
+    <p class="m-0"><b>Ingestion URL:</b> <code><%= L.ingestionUrl %></code></p>
+    <p class="m-0"><b>Stream Key:</b> <code><%= L.streamKey ? L.streamKey.replace(/.(?=.{4})/g,"•") : '-' %></code></p>
+  </div>
+  <div class="card">
+    <h3 class="card-title">Status YouTube</h3>
+    <div id="live-stats"><div class="skeleton" style="height:130px"></div></div>
+    <button class="btn btn-outline ripple mt-2" id="btn-refresh">Refresh</button>
+  </div>
+</div>
+
+<script>
+(async function(){
+  const ID = "<%= L.id %>";
+  const box = document.getElementById("live-stats");
+  async function load(){
+    const res = await fetch(`/api/live/${ID}/stats`);
+    const j = await res.json();
+    if(!j.success){ box.innerHTML = `<div class="alert alert-danger">${j.message||"Gagal memuat"}</div>`; return; }
+    const b = j.data.broadcast || {}, s = j.data.stream || {};
+    box.innerHTML = `
+      <div class="notice-list">
+        <div class="notice"><div class="ic"><i class="fa fa-circle-nodes"></i></div><div class="body"><p class="title">Life Cycle</p><p class="time">${b.lifeCycleStatus||"-"}</p></div></div>
+        <div class="notice"><div class="ic"><i class="fa fa-lock"></i></div><div class="body"><p class="title">Privacy</p><p class="time">${b.privacyStatus||"-"}</p></div></div>
+        <div class="notice"><div class="ic"><i class="fa fa-clock"></i></div><div class="body"><p class="title">Scheduled</p><p class="time">${b.scheduledStartTime||"-"}</p></div></div>
+        <div class="notice"><div class="ic"><i class="fa fa-play"></i></div><div class="body"><p class="title">Actual Start</p><p class="time">${b.actualStartTime||"-"}</p></div></div>
+        <div class="notice"><div class="ic"><i class="fa fa-flag-checkered"></i></div><div class="body"><p class="title">Actual End</p><p class="time">${b.actualEndTime||"-"}</p></div></div>
+        <div class="notice"><div class="ic"><i class="fa fa-video"></i></div><div class="body"><p class="title">Stream</p><p class="time">${s.streamStatus||"-"} • ${s.resolution||"var"} @ ${s.frameRate||"var"}</p></div></div>
+      </div>`;
+  }
+  document.getElementById("btn-refresh")?.addEventListener("click", load);
+  load(); setInterval(load, 10000);
+})();
+</script>
