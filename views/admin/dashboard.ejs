@@ -1,0 +1,12 @@
+<h2>Admin Dashboard</h2>
+<div class="tiles">
+  <div class="tile"><div class="icon"><i class="fa fa-users"></i></div>
+    <div class="meta"><div class="k">Total User</div><div class="v"><%= stats.totalUsers %></div></div></div>
+  <div class="tile"><div class="icon"><i class="fa fa-video"></i></div>
+    <div class="meta"><div class="k">Total Video</div><div class="v"><%= stats.totalVideos %></div></div></div>
+  <div class="tile"><div class="icon"><i class="fa fa-broadcast-tower"></i></div>
+    <div class="meta"><div class="k">Total Live</div><div class="v">✅ <%= stats.liveSuccess %> / ❌ <%= stats.liveFail %></div></div></div>
+  <div class="tile"><div class="icon"><i class="fa fa-server"></i></div>
+    <div class="meta"><div class="k">Sistem</div>
+      <div class="v"><%= stats.os.platform %> | CPU <%= stats.os.cpus %> core | RAM <%= stats.os.mem %> MB | Uptime <%= stats.os.uptime %>h</div></div></div>
+</div>
