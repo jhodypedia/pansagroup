@@ -1,0 +1,54 @@
+<h2 class="mb-2">Detail Video #<%= v.id %></h2>
+<div id="alerts" class="mb-2"></div>
+
+<div class="split-2">
+  <div class="card">
+    <h3 class="card-title">Info Lokal</h3>
+    <p class="m-0"><b>Judul:</b> <%= v.title %></p>
+    <p class="m-0"><b>Status:</b> <span class="badge <%= v.status==='uploaded'?'badge-success':(v.status==='failed'?'badge-danger':'badge-info') %>"><%= v.status %></span></p>
+    <p class="m-0"><b>YouTube ID:</b> <%= v.youtubeVideoId || '-' %></p>
+    <p class="m-0"><b>Terjadwal:</b> <%= v.scheduleAt ? new Date(v.scheduleAt).toLocaleString() : '-' %></p>
+  </div>
+  <div class="card">
+    <h3 class="card-title">Statistik YouTube</h3>
+    <div id="yt-stats">
+      <% if (!v.youtubeVideoId) { %>
+        <div class="alert alert-info">Belum terupload ke YouTube (atau masih pending).</div>
+      <% } else { %>
+        <div class="skeleton" style="height:120px"></div>
+      <% } %>
+    </div>
+    <% if (v.youtubeVideoId) { %>
+      <button class="btn btn-outline ripple mt-2" id="btn-refresh">Refresh</button>
+      <a class="btn btn-primary ripple mt-2" id="btn-open" target="_blank" rel="noopener">Buka di YouTube</a>
+    <% } %>
+  </div>
+</div>
+
+<script>
+(async function(){
+  const VID = "<%= v.id %>";
+  const YID = "<%= v.youtubeVideoId || '' %>";
+  const box = document.getElementById("yt-stats");
+  const btnOpen = document.getElementById("btn-open");
+  async function load(){
+    if(!YID){ return; }
+    const res = await fetch(`/api/videos/${VID}/stats`);
+    const j = await res.json();
+    if(!j.success){ box.innerHTML = `<div class="alert alert-danger">${j.message||"Gagal memuat"}</div>`; return; }
+    const d = j.data;
+    if(btnOpen) btnOpen.href = d.link;
+    box.innerHTML = `
+      <div class="notice-list">
+        <div class="notice"><div class="ic"><i class="fa fa-eye"></i></div><div class="body"><p class="title">Views</p><p class="time">${d.views||0}</p></div></div>
+        <div class="notice"><div class="ic"><i class="fa fa-thumbs-up"></i></div><div class="body"><p class="title">Likes</p><p class="time">${d.likes||0}</p></div></div>
+        <div class="notice"><div class="ic"><i class="fa fa-comments"></i></div><div class="body"><p class="title">Comments</p><p class="time">${d.comments||0}</p></div></div>
+        <div class="notice"><div class="ic"><i class="fa fa-lock"></i></div><div class="body"><p class="title">Privacy</p><p class="time">${d.privacyStatus||"-"}</p></div></div>
+        <div class="notice"><div class="ic"><i class="fa fa-clock"></i></div><div class="body"><p class="title">Published</p><p class="time">${d.publishedAt || "-"}</p></div></div>
+        <div class="notice"><div class="ic"><i class="fa fa-hourglass"></i></div><div class="body"><p class="title">Duration</p><p class="time">${d.duration||"-"}</p></div></div>
+      </div>`;
+  }
+  document.getElementById("btn-refresh")?.addEventListener("click", load);
+  if(YID){ load(); setInterval(load, 15000); }
+})();
+</script>
