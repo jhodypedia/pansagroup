@@ -1,0 +1,46 @@
+<h2 class="mb-3">Videos</h2>
+
+<div class="card mb-3">
+  <h3 class="card-title">Upload Video</h3>
+  <form method="post" action="/videos/upload" enctype="multipart/form-data" data-ajax="true">
+    <input type="text" class="form-control mb-2" name="title" placeholder="Judul" required>
+    <textarea class="form-control mb-2" name="description" placeholder="Deskripsi"></textarea>
+    <input type="file" class="form-control mb-2" name="video" accept="video/*" required>
+    <input type="file" class="form-control mb-2" name="thumbnail" accept="image/*">
+    <label><input type="checkbox" name="useAutoThumb" value="1"> Auto thumbnail</label>
+    <input type="datetime-local" class="form-control mb-2" name="scheduleAt">
+    <button class="btn btn-primary ripple">Upload</button>
+  </form>
+</div>
+
+<div class="table">
+  <table class="w-100">
+    <thead>
+      <tr>
+        <th>ID</th><th>Judul</th><th>Status</th><th>YouTube</th><th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% videos.forEach(v=>{ %>
+      <tr>
+        <td><%= v.id %></td>
+        <td><a href="/videos/<%= v.id %>"><%= v.title %></a></td>
+        <td>
+          <span class="badge 
+            <%= v.status==='uploaded'?'badge-success':(v.status==='failed'?'badge-danger':'badge-info') %>">
+            <%= v.status %>
+          </span>
+        </td>
+        <td><%= v.youtubeVideoId||'-' %></td>
+        <td>
+          <form method="post" action="/videos/<%= v.id %>/delete" data-ajax="true" onsubmit="return confirm('Hapus video ini?')">
+            <button class="btn btn-outline"><i class="fa fa-trash"></i></button>
+          </form>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<div id="videoStatus" class="mt-3"></div>
