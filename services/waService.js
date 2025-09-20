@@ -1,38 +1,38 @@
+// services/waService.js
 import makeWASocket, {
   useMultiFileAuthState,
-  Browsers,
-  DisconnectReason
+  DisconnectReason,
+  Browsers
 } from "@whiskeysockets/baileys";
 
 let sock;
 
 /**
- * Start WhatsApp socket
+ * Start WhatsApp connection
+ * @param {Server} io - Socket.IO instance
  */
 export async function startWA(io) {
   try {
+    // pakai MultiFileAuthState biar session persistent
     const { state, saveCreds } = await useMultiFileAuthState("wa_auth");
 
     sock = makeWASocket({
       auth: state,
-      printQRInTerminal: false, // QR kita kirim ke frontend, bukan ke terminal
-      browser: Browsers.macOS("Desktop"), // spoof browser
-      syncFullHistory: false
+      printQRInTerminal: false, // QR dikirim ke frontend, bukan terminal
+      browser: Browsers.macOS("Desktop"),
+      syncFullHistory: false,
     });
 
-    // Simpan kredensial
+    // simpan kredensial kalau update
     sock.ev.on("creds.update", saveCreds);
 
-    // Listener update koneksi
+    // event koneksi
     sock.ev.on("connection.update", (update) => {
-      const { connection, lastDisconnect, qr, pairingCode } = update;
+      const { connection, lastDisconnect, qr } = update;
 
       if (qr) {
-        io.emit("wa_qr", qr); // kirim QR string ke frontend
-      }
-
-      if (pairingCode) {
-        io.emit("wa_pairing", pairingCode); // pairing code (jika device support)
+        // kirim QR string ke frontend
+        io.emit("wa_qr", qr);
       }
 
       if (connection === "open") {
@@ -42,34 +42,39 @@ export async function startWA(io) {
 
       if (connection === "close") {
         const reason =
-          lastDisconnect?.error?.output?.statusCode || lastDisconnect?.error;
-        const shouldReconnect =
-          reason !== DisconnectReason.loggedOut &&
-          reason !== DisconnectReason.badSession;
+          lastDisconnect?.error?.output?.statusCode ||
+          lastDisconnect?.error?.message ||
+          lastDisconnect?.error;
 
-        io.emit("wa_logout");
         console.log("❌ WhatsApp disconnected:", reason);
 
-        if (shouldReconnect) {
+        // auto reconnect kalau bukan logout permanen
+        if (
+          reason !== DisconnectReason.loggedOut &&
+          reason !== DisconnectReason.badSession
+        ) {
           console.log("🔄 Reconnecting...");
-          setTimeout(() => startWA(io), 3000); // auto reconnect dengan delay
+          setTimeout(() => startWA(io), 3000);
         } else {
-          console.log("🛑 Logged out, perlu scan ulang.");
+          io.emit("wa_logout");
+          console.log("🛑 Session invalid, perlu scan ulang.");
         }
       }
     });
 
-    // Log event message masuk (opsional)
+    // log pesan masuk (opsional)
     sock.ev.on("messages.upsert", (msg) => {
-      console.log("📩 New message:", msg);
+      console.log("📩 New message:", JSON.stringify(msg, null, 2));
     });
   } catch (e) {
-    console.error("WA error:", e.message);
+    console.error("WA error:", e);
   }
 }
 
 /**
- * Kirim pesan WhatsApp ke nomor tertentu
+ * Kirim pesan WhatsApp
+ * @param {string} phone - Nomor tujuan (bisa 08xxxx atau +62xxxx)
+ * @param {string} message - Isi pesan
  */
 export async function sendWA(phone, message) {
   if (!sock) throw new Error("WA not ready");
@@ -83,4 +88,5 @@ export async function sendWA(phone, message) {
   const jid = num.replace(/\D/g, "") + "@s.whatsapp.net";
 
   await sock.sendMessage(jid, { text: message });
+  console.log("📤 WA message sent to", jid);
 }
