@@ -3,14 +3,17 @@
 <div id="admin-wa-alerts" class="mb-3"></div>
 
 <div class="split-2">
+  <!-- QR Code -->
   <div class="card">
     <h3 class="card-title">Scan QR</h3>
     <div class="empty">
-      <img id="wa-qr-img" alt="QR WhatsApp akan muncul di sini" style="width:260px;height:260px;object-fit:contain;border-radius:16px;border:1px dashed var(--border);padding:8px;background:var(--bg)">
-      <p class="text-muted">QR akan muncul otomatis ketika koneksi siap.</p>
+      <!-- div kosong, QR akan di-render langsung via QRCode.js -->
+      <div id="wa-qr-img" style="width:260px;height:260px"></div>
+      <p class="text-muted mt-2">QR akan muncul otomatis ketika koneksi siap.</p>
     </div>
   </div>
 
+  <!-- Pairing Code -->
   <div class="card">
     <h3 class="card-title">Pairing Code</h3>
     <div class="empty">
@@ -20,10 +23,13 @@
   </div>
 </div>
 
+<!-- Broadcast -->
 <div class="card mt-3">
   <h3 class="card-title">Broadcast Pesan</h3>
   <form data-ajax="true" method="post" action="/admin/wa/broadcast" class="d-flex align-center">
     <input class="form-control" name="msg" placeholder="Tulis pesan..." required>
-    <button class="btn btn-primary ripple" style="margin-left:10px"><i class="fa fa-paper-plane"></i> Kirim</button>
+    <button class="btn btn-primary ripple" style="margin-left:10px">
+      <i class="fa fa-paper-plane"></i> Kirim
+    </button>
   </form>
 </div>
