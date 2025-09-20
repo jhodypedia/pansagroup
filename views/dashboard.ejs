@@ -1,0 +1,12 @@
+<h2>Dashboard</h2>
+<div class="tiles">
+  <div class="tile"><div class="icon"><i class="fa fa-database"></i></div>
+    <div class="meta"><div class="k">Storage</div><div class="v"><%= user.storageUsedMB %> / <%= user.storageQuotaMB %> MB</div></div></div>
+  <div class="tile"><div class="icon"><i class="fa fa-video"></i></div>
+    <div class="meta"><div class="k">Total Video</div><div class="v"><%= stats.totalVideos %></div></div></div>
+  <div class="tile"><div class="icon"><i class="fa fa-youtube"></i></div>
+    <div class="meta"><div class="k">Akun Google</div><div class="v"><%= stats.totalAccounts %></div></div></div>
+  <div class="tile"><div class="icon"><i class="fa fa-crown"></i></div>
+    <div class="meta"><div class="k">Status</div><div class="v"><%= user.isPremium?"Premium":"Free" %></div></div></div>
+</div>
+<div id="alerts"></div>
