@@ -1,0 +1,22 @@
+<h2 class="mb-3">Admin • Licenses</h2>
+<form data-ajax="true" method="post" action="/admin/licenses/generate" class="mb-3">
+  <button class="btn btn-primary ripple"><i class="fa fa-key"></i> Generate License</button>
+</form>
+<div class="table">
+  <table class="w-100">
+    <thead>
+      <tr><th>ID</th><th>Key</th><th>Dipakai</th><th>Used By</th></tr>
+    </thead>
+    <tbody>
+    <% keys.forEach(k=>{ %>
+      <tr>
+        <td><%= k.id %></td>
+        <td><code><%= k.key %></code></td>
+        <td><span class="badge <%= k.isUsed?'badge-danger':'badge-success' %>"><%= k.isUsed?'Yes':'No' %></span></td>
+        <td><%= k.usedByUserId || '-' %></td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table>
+</div>
+<div id="alerts" class="mt-3"></div>
