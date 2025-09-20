@@ -1,0 +1,19 @@
+<h2 class="mb-3">Settings</h2>
+
+<div class="card mb-3">
+  <h3 class="card-title">Timezone</h3>
+  <form method="post" action="/settings" data-ajax="true">
+    <select class="form-control mb-2" name="timezone">
+      <option value="Asia/Jakarta" <%= user.timezone==='Asia/Jakarta'?'selected':'' %>>Asia/Jakarta (WIB)</option>
+      <option value="Asia/Makassar" <%= user.timezone==='Asia/Makassar'?'selected':'' %>>Asia/Makassar (WITA)</option>
+      <option value="Asia/Jayapura" <%= user.timezone==='Asia/Jayapura'?'selected':'' %>>Asia/Jayapura (WIT)</option>
+    </select>
+    <button class="btn btn-primary ripple">Simpan</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3 class="card-title">Akun Google</h3>
+  <a class="btn btn-outline ripple" href="/google/connect"><i class="fa fa-plug"></i> Hubungkan Google</a>
+  <p class="text-muted">Setelah terhubung, akun muncul di sini (hapus via tombol delete di daftar akun – opsional tambahkan sendiri bila ingin).</p>
+</div>
