@@ -1,0 +1,44 @@
+<h2 class="mb-3">Live Stream</h2>
+
+<div class="card mb-3">
+  <h3 class="card-title">Buat Live Baru</h3>
+  <form method="post" action="/live/create" data-ajax="true">
+    <input type="text" class="form-control mb-2" name="title" placeholder="Judul" required>
+    <textarea class="form-control mb-2" name="description" placeholder="Deskripsi"></textarea>
+    <input type="datetime-local" class="form-control mb-2" name="startTime" required>
+    <button class="btn btn-primary ripple">Buat Live</button>
+  </form>
+</div>
+
+<div class="table">
+  <table class="w-100">
+    <thead>
+      <tr>
+        <th>ID</th><th>Judul</th><th>Status</th><th>Start</th><th>YouTube</th><th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% lives.forEach(l=>{ %>
+      <tr>
+        <td><%= l.id %></td>
+        <td><a href="/live/<%= l.id %>"><%= l.title %></a></td>
+        <td>
+          <span class="badge 
+            <%= l.status==='live'?'badge-success':(l.status==='failed'?'badge-danger':'badge-info') %>">
+            <%= l.status %>
+          </span>
+        </td>
+        <td><%= l.scheduledStartTime? new Date(l.scheduledStartTime).toLocaleString() : '-' %></td>
+        <td><%= l.streamId||'-' %></td>
+        <td>
+          <form method="post" action="/live/<%= l.id %>/delete" data-ajax="true" onsubmit="return confirm('Hapus live ini?')">
+            <button class="btn btn-outline"><i class="fa fa-trash"></i></button>
+          </form>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<div id="liveStatus" class="mt-3"></div>
