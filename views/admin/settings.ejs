@@ -1,0 +1,33 @@
+<h2 class="mb-3">Admin • Settings</h2>
+<div class="split-2">
+  <div class="card">
+    <h3 class="card-title">reCAPTCHA</h3>
+    <form data-ajax="true" method="post" action="/admin/settings">
+      <label class="form-label">Enable</label>
+      <select class="form-control mb-2" name="recaptchaEnabled">
+        <option value="false" <%= !s.recaptchaEnabled?'selected':'' %>>false</option>
+        <option value="true"  <%= s.recaptchaEnabled?'selected':'' %>>true</option>
+      </select>
+      <label class="form-label">Site Key</label>
+      <input class="form-control mb-2" name="recaptchaSiteKey" value="<%= s.recaptchaSiteKey||'' %>">
+      <label class="form-label">Secret</label>
+      <input class="form-control mb-3" name="recaptchaSecret" value="<%= s.recaptchaSecret||'' %>">
+      <button class="btn btn-primary">Simpan</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title">QRIS</h3>
+    <form data-ajax="true" method="post" action="/admin/settings" enctype="multipart/form-data">
+      <label class="form-label">Payload</label>
+      <textarea class="form-control mb-2" name="qrisPayload"><%= s.qrisPayload||'' %></textarea>
+      <label class="form-label">QRIS Image</label>
+      <input type="file" class="form-control mb-3" name="qrisImage" accept="image/*">
+      <% if (s.qrisImagePath) { %>
+        <img src="/public/<%= s.qrisImagePath %>" style="max-width:200px;border-radius:10px" class="mb-2">
+      <% } %>
+      <button class="btn btn-primary">Upload</button>
+    </form>
+  </div>
+</div>
+<div id="alerts" class="mt-3"></div>
