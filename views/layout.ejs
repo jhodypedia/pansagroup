@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title || "Video Live" %></title>
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/public/style.css"><!-- gunakan CSS kamu -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous"/>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+<% if (user) { %>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">VL</div><div class="title">VideoLive</div></div>
+      <nav class="menu">
+        <a href="/dashboard" class="item"><i class="fa fa-home"></i> Dashboard</a>
+        <a href="/videos" class="item"><i class="fa fa-video"></i> Videos</a>
+        <a href="/live" class="item"><i class="fa fa-broadcast-tower"></i> Live</a>
+        <a href="/settings" class="item"><i class="fa fa-cog"></i> Settings</a>
+        <a href="/stats" class="item"><i class="fa fa-chart-line"></i> Statistik</a>
+        <% if(user.role==="admin"){ %>
+          <a href="/admin/dashboard" class="item"><i class="fa fa-shield-alt"></i> Admin Dashboard</a>
+          <a href="/admin/users" class="item"><i class="fa fa-users-gear"></i> Admin Users</a>
+          <a href="/admin/licenses" class="item"><i class="fa fa-key"></i> Admin Licenses</a>
+          <a href="/admin/settings" class="item"><i class="fa fa-sliders"></i> Admin Settings</a>
+          <a href="/admin/wa" class="item"><i class="fa fa-mobile-screen"></i> Admin WhatsApp</a>
+        <% } %>
+      </nav>
+      <div class="foot">Logged in: <%= user.email %></div>
+    </aside>
+    <div class="flex-grow-1">
+      <header class="topbar">
+        <div class="profile">
+          <span class="handle"><%= user.email %></span>
+          <form method="post" action="/logout" data-ajax="true"><button class="btn btn-ghost">Logout</button></form>
+        </div>
+      </header>
+      <main class="content">
+        <div id="alerts" class="mb-3"></div>
+        <%- body %>
+      </main>
+    </div>
+  </div>
+<% } else { %>
+  <main class="login-page"><%- body %></main>
+<% } %>
+<script>
+  const socket = io({ auth:{ uid: "<%= user? user.id : '' %>" }});
+</script>
+<script src="/public/app.js"></script>
+</body>
+</html>
