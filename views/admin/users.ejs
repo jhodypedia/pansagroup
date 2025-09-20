@@ -1,0 +1,50 @@
+<h2 class="mb-3">Admin • Users</h2>
+<div class="table">
+  <table class="w-100">
+    <thead>
+      <tr>
+        <th>ID</th><th>Email</th><th>Phone</th><th>Role</th><th>Premium</th><th>Storage</th><th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% users.forEach(u=>{ %>
+      <tr>
+        <td><%= u.id %></td>
+        <td><%= u.email %></td>
+        <td><%= u.phone %></td>
+        <td>
+          <form data-ajax="true" method="post" action="/admin/users/<%= u.id %>/role" class="d-flex align-center">
+            <select name="role" class="form-control" style="width:120px;margin-right:8px">
+              <option value="user" <%= u.role==='user'?'selected':'' %>>user</option>
+              <option value="admin" <%= u.role==='admin'?'selected':'' %>>admin</option>
+            </select>
+            <button class="btn btn-outline">Simpan</button>
+          </form>
+        </td>
+        <td>
+          <form data-ajax="true" method="post" action="/admin/users/<%= u.id %>/premium" class="d-flex align-center">
+            <select name="isPremium" class="form-control" style="width:120px;margin-right:8px">
+              <option value="false" <%= !u.isPremium?'selected':'' %>>false</option>
+              <option value="true"  <%= u.isPremium?'selected':'' %>>true</option>
+            </select>
+            <button class="btn btn-outline">Simpan</button>
+          </form>
+        </td>
+        <td>
+          <form data-ajax="true" method="post" action="/admin/users/<%= u.id %>/storage" class="d-flex align-center">
+            <input type="number" class="form-control" name="storageQuotaMB" value="<%= u.storageQuotaMB %>" style="width:120px;margin-right:8px">
+            <button class="btn btn-outline">Update</button>
+          </form>
+          <div class="text-muted"><%= Math.round(u.storageUsedMB) %> MB terpakai</div>
+        </td>
+        <td>
+          <form data-ajax="true" method="post" action="/admin/users/<%= u.id %>/delete" onsubmit="return confirm('Hapus user ini?')">
+            <button class="btn btn-primary">Hapus</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table>
+</div>
+<div id="alerts" class="mt-3"></div>
